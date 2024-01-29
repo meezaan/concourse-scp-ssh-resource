@@ -1,0 +1,5 @@
+#!/usr/bin/env php
+<?php
+
+
+echo '{ "version": { "ref": "none", "message": "Hello World" }, "metadata": [{ "name": "message", "value": "Hello World" }] }';
