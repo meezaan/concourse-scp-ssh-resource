@@ -1,6 +1,4 @@
-FROM alpine:3.7
-RUN apk add --update --upgrade --no-cache bash
+FROM php:8.2-cli-alpine
 ADD assets /opt/resource
 RUN chmod +x /opt/resource/*
-WORKDIR /
-ENTRYPOINT ["/bin/bash"]
+RUN apk add --no-cache bash openssh openssl

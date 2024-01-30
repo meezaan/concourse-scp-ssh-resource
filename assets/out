@@ -1,5 +1,100 @@
 #!/usr/bin/env php
 <?php
+require_once __DIR__ . '/functions.php';
 
+// Read STDIN for the JSON input.
+$input = file_get_contents('php://stdin');
 
-echo '{ "version": { "ref": "none", "message": "Hello World" }, "metadata": [{ "name": "message", "value": "Hello World" }] }';
+if (empty($input)) {
+    write('Nothing was passed in via STDIN and user, host and private_key are required.');
+    exit(1);
+}
+
+$config = json_decode($input, true);
+
+$host = $config['source']['host'];
+$port = (string) $config['source']['port'] ?? "22";
+$user = $config['source']['user'];
+$privateKey = $config['source']['private_key'];
+$params = $config['params'] ?? [];
+$files = $params['files'] ?? [];
+$commands = $params['commands'] ?? [];
+$path = $argv[1] ?? '/tmp/build/put';
+
+if (empty($host) || empty($user) || empty($privateKey)) {
+    write('Missing required parameters.');
+    exit(1);
+}
+
+if (empty($files) && empty($commands)) {
+    write('No files or commands found. Please specify at least one of these.');
+    exit(1);
+}
+
+// Write key to file.
+file_put_contents('/tmp/key', $privateKey);
+chmod('/tmp/key', 0600);
+write('Copying ' . count($files) . ' files');
+// SCP the files.
+foreach ($files as $key => $file) {
+    write("Copying file: $file");
+    $parts = explode(':', $file);
+    $source = $parts[0]; // Local file.
+    $destination = $parts[1]; // Remote file. Must begin with /.
+    $command = "scp -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
+    $output = [];
+    $return = 0;
+    exec($command, $output, $return);
+    if ($return !== 0) {
+        write("Error running command: $command");
+        write($output);
+        exit(1);
+    }
+}
+write('SCP Completed.');
+
+write('Running ' . count($commands) . ' commands');
+// SSH the commands.
+foreach ($commands as $key => $command) {
+    write("Running command: $command");
+    $command = "ssh -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$command'";
+    $output = [];
+    $return = 0;
+    exec($command, $output, $return);
+    if ($return !== 0) {
+        write("Error running command: $command");
+        write($output);
+        exit(1);
+    }
+    write($output);
+}
+write('SSH Completed.');
+
+$metadata = [
+        [
+            'name' => 'host',
+            'value' => $host,
+        ],
+        [
+            'name' => 'port',
+            'value' => $port,
+        ],
+        [
+            'name' => 'user',
+            'value' => $user,
+        ],
+        [
+            'name' => 'date',
+            'value' => date('Y-m-d H:i:s'),
+        ],
+];
+
+$response = [
+    'version' => [
+        'ref' => md5(json_encode($metadata)),
+    ],
+    'metadata' => $metadata,
+];
+
+echo json_encode($response);
+
