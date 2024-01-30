@@ -76,6 +76,8 @@ resources:
       -----END OPENSSH PRIVATE KEY-----
 ```
 
+**Please use a credential manager for your private key, and do not check it into source control.**
+
 ## Thanks
 [Dan Spencer (@danrspencer)](https://github.com/danrspencer) for writing this. All I've done is minor bug fixing and documentation.
 [Mike Parks (@Karunamon)](https://github.com/Karunamon) for the bug fixing and docs.
