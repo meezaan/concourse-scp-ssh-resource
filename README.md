@@ -57,7 +57,8 @@ Add a new resource type to your pipeline:
 resource_types:
 - name: ssh-scp
   type: registry-image
-  source: { repository: meezaan/concourse-ssh-scp-resource }
+  source:
+    repository: meezaan/concourse-ssh-scp-resource
 ```
 
 Then, define a resource targeting the system you want to run commands on or copy files to:
@@ -79,6 +80,6 @@ resources:
 **Please use a credential manager for your private key, and do not check it into source control.**
 
 ## Thanks
-[Dan Spencer (@danrspencer)](https://github.com/danrspencer) for writing this. All I've done is minor bug fixing and documentation.
-[Mike Parks (@Karunamon)](https://github.com/Karunamon) for the bug fixing and docs.
+* [Dan Spencer (@danrspencer)](https://github.com/danrspencer) for writing this. All I've done is minor bug fixing and documentation.
+* [Mike Parks (@Karunamon)](https://github.com/Karunamon) for the bug fixing and docs.
 
