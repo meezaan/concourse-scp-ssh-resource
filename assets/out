@@ -42,7 +42,11 @@ foreach ($files as $key => $file) {
     $parts = explode(':', $file);
     $source = $parts[0]; // Local file.
     $destination = $parts[1]; // Remote file. Must begin with /.
-    $command = "scp -vvv -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
+    if ($verbose) {
+        $command = "scp -vvv -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
+    } else {
+        $command = "scp -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
+    }
     $output = [];
     $return = 0;
     exec($command, $output, $return);
