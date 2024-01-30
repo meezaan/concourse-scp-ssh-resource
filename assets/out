@@ -61,9 +61,9 @@ write('SCP Completed.');
 $cmx = implode(' && ', $commands);
 write("Running Commands: $cmx");
 if ($verbose) {
-    $command = "ssh -vvv -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$commands'";
+    $command = "ssh -vvv -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$cmx'";
 } else {
-    $command = "ssh -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$commands'";
+    $command = "ssh -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$cmx'";
 }
 
 $output = [];
