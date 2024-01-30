@@ -15,6 +15,7 @@ $config = json_decode($input, true);
 $host = $config['source']['host'];
 $port = (string) $config['source']['port'] ?? "22";
 $user = $config['source']['user'];
+$verbose = $config['source']['verbose'] == "true";
 $privateKey = $config['source']['private_key'];
 $params = $config['params'] ?? [];
 $files = $params['files'] ?? [];
@@ -41,7 +42,7 @@ foreach ($files as $key => $file) {
     $parts = explode(':', $file);
     $source = $parts[0]; // Local file.
     $destination = $parts[1]; // Remote file. Must begin with /.
-    $command = "scp -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
+    $command = "scp -vvv -o StrictHostKeyChecking=no -i /tmp/key -P $port $path/$source $user@$host:$destination";
     $output = [];
     $return = 0;
     exec($command, $output, $return);
@@ -53,21 +54,23 @@ foreach ($files as $key => $file) {
 }
 write('SCP Completed.');
 
-write('Running ' . count($commands) . ' commands');
-// SSH the commands.
-foreach ($commands as $key => $command) {
-    write("Running command: $command");
-    $command = "ssh -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$command'";
-    $output = [];
-    $return = 0;
-    exec($command, $output, $return);
-    if ($return !== 0) {
-        write("Error running command: $command");
-        write($output);
-        exit(1);
-    }
-    write($output);
+$cmx = implode(' && ', $commands);
+write("Running Commands: $cmx");
+if ($verbose) {
+    $command = "ssh -vvv -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$commands'";
+} else {
+    $command = "ssh -o StrictHostKeyChecking=no -i /tmp/key -p $port $user@$host '$commands'";
 }
+
+$output = [];
+$return = 0;
+exec($command, $output, $return);
+if ($return !== 0) {
+    write("Error running command: $command");
+    write($output);
+    exit(1);
+}
+write($output);
 write('SSH Completed.');
 
 $metadata = [
@@ -78,10 +81,6 @@ $metadata = [
         [
             'name' => 'port',
             'value' => $port,
-        ],
-        [
-            'name' => 'user',
-            'value' => $user,
         ],
         [
             'name' => 'date',

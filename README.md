@@ -8,6 +8,7 @@ All items are required, and go under the `source` key:
 * `user`: SSH username
 * `host`: Host to log into
 * `port`: Port to connect to (default: 22)
+* `verbose`: Whether to print verbose output (default: "false")
 * `private_key`:  Private key for `user`
 
 ## Behavior
@@ -17,7 +18,7 @@ All items are required, and go under the `source` key:
 
 ### SCP
 
-To copy files, add the `files` key to `params`, and under it, pass an list of file pairs (prefixed with a `-`) to copy with `:` as the separator between source and destination. It is recommended to quote both the source and destination to avoid any YAML parsing surprises. The source directory should be an `output` name from a previous build step. This is represented in the example as `outfiles`. The destination directory should be an absolute path (beginning with a `/`).
+To copy files, add the `files` key to `params`, and under it, pass a list of file pairs (prefixed with a `-`) to copy with `:` as the separator between source and destination. It is recommended to quote both the source and destination to avoid any YAML parsing surprises. The source directory should be an `output` name from a previous build step. This is represented in the example as `outfiles`. The destination directory should be an absolute path (beginning with a `/`).
 
 ```yaml
 - put: scp-ssh-resource
