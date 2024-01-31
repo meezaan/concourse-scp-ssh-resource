@@ -1,2 +1,2 @@
 #!/bin/bash
-echo '[{ "ref": "none",  "message": "Hello World!" }]'
+echo '[{ "ref": "none",  "message": "SCP SSH Resource" }]'

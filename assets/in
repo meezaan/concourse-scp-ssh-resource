@@ -1,2 +1,2 @@
 #!/bin/bash
-echo '{ "version": { "ref": "none", "message": "Hello World" }, "metadata": [{ "name": "message", "value": "Hello World" }] }'
+echo '{ "version": { "ref": "none", "message": "SCP SSH Resource" }, "metadata": [{ "name": "message", "value": "Hello World" }] }'
